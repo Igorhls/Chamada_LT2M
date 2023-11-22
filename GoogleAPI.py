@@ -11,7 +11,9 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = "1b3T7gfqZPJwHgXQyDe1a2q__IXLGH2rpzXlzZG_-TJg"
-SAMPLE_RANGE_NAME = "Class Novembro!A1:E2"
+SAMPLE_RANGE_NAME = "A1:E2"
+
+
 
 
 def main():
@@ -47,19 +49,11 @@ def main():
         .get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
         .execute()
     )
-    values = result.get("values", [])
+    frequencias = result['values']
+    print(frequencias)
 
-    if not values:
-      print("No data found.")
-      return
-
-    print("Name, Major:")
-    for row in values:
-      # Print columns A and E, which correspond to indices 0 and 4.
-      print(f"{row[0]}, {row[4]}")
   except HttpError as err:
     print(err)
-
 
 if __name__ == "__main__":
   main()
