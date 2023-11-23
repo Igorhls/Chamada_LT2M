@@ -5,6 +5,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime
+import json
 
 # Função para obter a instância da planilha
 def obter_planilha():
@@ -38,6 +39,12 @@ def obter_planilha():
 def matricula_existente(worksheet, matricula):
     matriculas = worksheet.col_values(2)  # Coluna B contém as matrículas
     return matricula in matriculas
+
+# Função para obter o nome correspondente à matrícula do arquivo JSON
+def obter_nome_por_matricula(matricula):
+    with open("nomes_matriculas.json", "r") as file:
+        dados = json.load(file)
+        return dados.get(matricula, None)
 
 # Função para registrar o ponto
 def registrar_ponto(matricula, nome):
@@ -83,7 +90,12 @@ def registrar_ponto(matricula, nome):
 if __name__ == "__main__":
     # Solicitar entrada do usuário
     matricula = input("Digite a matrícula: ")
-    nome = input("Digite o nome: ")
 
-    # Chamar a função para registrar ponto
-    registrar_ponto(matricula, nome)
+    # Obter o nome correspondente à matrícula
+    nome = obter_nome_por_matricula(matricula)
+
+    if nome:
+        # Chamar a função para registrar ponto
+        registrar_ponto(matricula, nome)
+    else:
+        print(f"Matrícula {matricula} não encontrada nos dados.")
