@@ -70,17 +70,16 @@ def registrar_ponto(matricula, nome):
 
         if not entrada:
             # Registra a entrada
-            agora = datetime.now()
-            entrada = agora.strftime("%H:%M:%S")
+            agora = datetime.now().date()
+            entrada = datetime.now().strftime("%H:%M:%S")
             worksheet.update_cell(row_number, 3, agora.strftime("%d/%m/%Y"))
             worksheet.update_cell(row_number, 4, entrada)
             print(f"Entrada registrada para {nome} ({matricula}): {entrada}")
         elif not saida:
             # Registra a saída
-            agora = datetime.now()
-            saida = agora.strftime("%H:%M:%S")
-            worksheet.update_cell(row_number, 5, saida)
-            print(f"Saida registrada para {nome} ({matricula}): {saida}")
+            agora = datetime.now().strftime("%H:%M:%S")
+            worksheet.update_cell(row_number, 5, agora)
+            print(f"Saida registrada para {nome} ({matricula}): {agora}")
         else:
             print("Não é possível registrar novamente. Já foram registradas entrada e saída.")
 
