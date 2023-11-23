@@ -14,8 +14,6 @@ SAMPLE_SPREADSHEET_ID = "1b3T7gfqZPJwHgXQyDe1a2q__IXLGH2rpzXlzZG_-TJg"
 SAMPLE_RANGE_NAME = "A1:E2"
 
 
-
-
 def main():
   """Shows basic usage of the Sheets API.
   Prints values from a sample spreadsheet.
