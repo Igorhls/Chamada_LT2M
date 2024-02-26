@@ -53,36 +53,40 @@ def registrar_ponto(matricula, nome, rotulo_retorno):
         # Obter a instância da planilha
         worksheet = obter_planilha()
 
-        # Verificar se a matrícula já está na planilha
-        if matricula_existente(worksheet, matricula):
-            rotulo_retorno["text"] = f'Matricula já encontrada: {matricula}'
-        else:
-            # Se a matrícula não foi encontrada, adicioná-la
+        # Se a matrícula não foi encontrada, adicioná-la
+        if not matricula_existente(worksheet, matricula):
             nova_linha = [nome, matricula, "", "", ""]
             worksheet.append_row(nova_linha)
             rotulo_retorno["text"] = f"Matrícula {matricula} adicionada à planilha para {nome}"
 
-        # Obter a linha correspondente
-        row_number = worksheet.find(matricula).row
+        # Obter a última linha preenchida
+        ultima_linha = worksheet.row_count
 
-        # Verificar se a entrada já foi registrada
-        entrada = worksheet.cell(row_number, 4).value
-        saida = worksheet.cell(row_number, 5).value
+        # Verificar se já existe uma entrada e uma saída registradas
+        entrada = worksheet.cell(ultima_linha, 4).value if ultima_linha > 0 else None
+        saida = worksheet.cell(ultima_linha, 5).value if ultima_linha > 0 else None
 
         if not entrada:
             # Registra a entrada
             agora = datetime.now().date()
             entrada = datetime.now().strftime("%H:%M:%S")
-            worksheet.update_cell(row_number, 3, agora.strftime("%d/%m/%Y"))
-            worksheet.update_cell(row_number, 4, entrada)
+            worksheet.update_cell(ultima_linha, 3, agora.strftime("%d/%m/%Y"))
+            worksheet.update_cell(ultima_linha, 4, entrada)
             rotulo_retorno["text"] = f"Entrada registrada para {nome} ({matricula}): {entrada}"
         elif not saida:
             # Registra a saída
             agora = datetime.now().strftime("%H:%M:%S")
-            worksheet.update_cell(row_number, 5, agora)
+            worksheet.update_cell(ultima_linha, 5, agora)
             rotulo_retorno["text"] = f"Saida registrada para {nome} ({matricula}): {agora}"
         else:
-            rotulo_retorno["text"] = "Não é possível registrar novamente. Já foram registradas entrada e saída."
+            # Adicionar uma nova linha abaixo
+            nova_linha = [nome, matricula, "", "", ""]
+            worksheet.append_row(nova_linha)
+            nova_row_number = ultima_linha + 1
+            agora = datetime.now().strftime("%H:%M:%S")
+            worksheet.update_cell(nova_row_number, 3, datetime.now().strftime("%d/%m/%Y"))
+            worksheet.update_cell(nova_row_number, 4, agora)
+            rotulo_retorno["text"] = f"Nova linha adicionada para {nome} ({matricula}) com entrada registrada: {agora}"
 
     except HttpError as err:
         rotulo_retorno["text"] = str(err)
@@ -116,7 +120,7 @@ root = tk.Tk()
 root.title("Registro de Ponto")
 
 # Aumentar o tamanho da janela
-root.geometry("800x200")
+root.geometry("600x200")
 
 # Centralizar a janela na tela
 centralizar_janela(root)
@@ -136,4 +140,3 @@ rotulo_retorno.pack(pady=10)
 
 # Iniciar o loop principal da interface gráfica
 root.mainloop()
-
